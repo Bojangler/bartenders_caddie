@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bartender's Caddie</title>
+</head>
+<body>
+    <h1>Bartender's Caddie</h1>
+    <form method="post">
+        <label for="ingredients">Enter available ingredients (comma separated):</label>
+        <input type="text" id="ingredients" name="ingredients">
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if suggestions %}
+        <h2>Cocktails you can make:</h2>
+        <ul>
+            {% for cocktail in suggestions %}
+                <li>{{ cocktail }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if almost_suggestions %}
+        <h2>Cocktails missing 1 or 2 ingredients:</h2>
+        <ul>
+            {% for cocktail, missing in almost_suggestions %}
+                <li>{{ cocktail }} (missing: {{ missing | join(', ') }})</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
