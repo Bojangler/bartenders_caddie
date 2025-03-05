@@ -1,19 +1,14 @@
-# filepath: /c:/Users/rossw/Documents/bartenders_caddie/app.py
 from flask import Flask, render_template, request
+import json
 
 app = Flask(__name__)
 
-# Cocktail Database (Simplified)
-cocktails = {
-    "Mojito": ["rum", "mint", "lime", "sugar", "soda water"],
-    "Margarita": ["tequila", "lime juice", "cointreau"],
-    "Old Fashioned": ["bourbon", "sugar", "bitters", "water"],
-    "Cosmopolitan": ["vodka", "cointreau", "lime juice", "cranberry juice"],
-    "Manhattan": ["rye whiskey", "sweet vermouth", "bitters"],
-    "Daiquiri": ["rum", "lime juice", "sugar"],
-    "Gin and Tonic": ["gin", "tonic water", "lime"],  # corrected gin and tonic
-    "Moscow Mule": ["vodka", "ginger beer", "lime juice"], #Added Moscow Mule
-}
+# Load cocktail data from JSON file
+with open('cocktails.json') as f:
+    cocktail_data = json.load(f)
+
+# Extract cocktail names and ingredients
+cocktails = {cocktail['name']: [ingredient['name'] for ingredient in cocktail['ingredients']] for cocktail in cocktail_data}
 
 def suggest_cocktails(available_ingredients):
     """
