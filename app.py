@@ -1,3 +1,4 @@
+# filepath: /c:/Users/rossw/Documents/bartenders_caddie/app.py
 from flask import Flask, render_template, request
 import json
 
@@ -28,11 +29,16 @@ def suggest_cocktails(available_ingredients):
                     ingredient_cocktail_count[ingredient] += 1
         elif len(missing) <= 2:
             almost_suggestions.append((cocktail, missing))
-        for ingredient in missing:
-            if ingredient in missing_ingredients:
-                missing_ingredients[ingredient] += 1
-            else:
-                missing_ingredients[ingredient] = 1
+            for ingredient in missing:
+                if ingredient in missing_ingredients:
+                    missing_ingredients[ingredient] += 1
+                else:
+                    missing_ingredients[ingredient] = 1
+
+    # Adjust the count for missing ingredients to only include those that would allow making a new cocktail
+    for ingredient in missing_ingredients:
+        missing_ingredients[ingredient] = sum(1 for cocktail, missing in almost_suggestions if len(missing) == 1 and ingredient in missing)
+
     return suggestions, almost_suggestions, missing_ingredients, ingredient_cocktail_count
 
 @app.route("/", methods=["GET", "POST"])
