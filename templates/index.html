@@ -1,33 +1,85 @@
+<!-- filepath: /c:/Users/rossw/Documents/bartenders_caddie/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bartender's Caddie</title>
+    <title>Bartender's Caddie Beta</title>
+    <script>
+        function updateIngredients() {
+            document.getElementById('update-ingredients-form').submit();
+        }
+
+        function filterCocktails(ingredient) {
+            document.getElementById('filter-ingredient').value = ingredient;
+            document.getElementById('filter-form').submit();
+        }
+
+        function clearFilter() {
+            document.getElementById('filter-ingredient').value = '';
+            document.getElementById('filter-form').submit();
+        }
+    </script>
 </head>
 <body>
-    <h1>Bartender's Caddie</h1>
-    <form method="post">
-        <label for="ingredients">Enter available ingredients (comma separated):</label>
-        <input type="text" id="ingredients" name="ingredients">
-        <button type="submit">Submit</button>
-    </form>
+    <h1>Bartender's Caddie Beta</h1>
 
+    <h2>Cocktails you can make{% if filter_ingredient %} with {{ filter_ingredient }}{% endif %}:</h2>
     {% if suggestions %}
-        <h2>Cocktails you can make:</h2>
         <ul>
-            {% for cocktail in suggestions %}
-                <li>{{ cocktail }}</li>
+            {% for cocktail, ingredients in suggestions %}
+                <li>{{ cocktail }} ({{ ingredients | join(', ') }})</li>
             {% endfor %}
         </ul>
+    {% else %}
+        <p>Add some more ingredients to get a list of cocktails</p>
     {% endif %}
 
+    {% if filter_ingredient %}
+        <button onclick="clearFilter()">Clear Filter</button>
+    {% endif %}
+
+    <h2>Cocktails missing 1 or 2 ingredients{% if filter_ingredient %} with {{ filter_ingredient }}{% endif %}:</h2>
     {% if almost_suggestions %}
-        <h2>Cocktails missing 1 or 2 ingredients:</h2>
         <ul>
             {% for cocktail, missing in almost_suggestions %}
                 <li>{{ cocktail }} (missing: {{ missing | join(', ') }})</li>
             {% endfor %}
         </ul>
+    {% else %}
+        <p>Add some more ingredients for cocktail suggestions</p>
     {% endif %}
+
+    <form method="post" id="update-ingredients-form">
+        {% if available_ingredients %}
+            <h2>Available Ingredients:</h2>
+            <ul>
+                {% for ingredient in available_ingredients %}
+                    <li>
+                        <input type="checkbox" name="available_ingredients" value="{{ ingredient }}" checked onchange="updateIngredients()">
+                        {{ ingredient }} (<span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient_cocktail_count[ingredient] }} cocktails</span>)
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if missing_ingredients %}
+            <h2>Missing Ingredients:</h2>
+            <ul>
+                {% for ingredient, count in missing_ingredients.items() %}
+                    <li>
+                        <input type="checkbox" name="missing_ingredients" value="{{ ingredient }}" onchange="updateIngredients()">
+                        {{ ingredient }} ({{ count }} additional cocktails)
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
+
+    <form method="post" id="filter-form">
+        <input type="hidden" name="filter_ingredient" id="filter-ingredient">
+        {% for ingredient in available_ingredients %}
+            <input type="hidden" name="available_ingredients" value="{{ ingredient }}">
+        {% endfor %}
+    </form>
 </body>
 </html>
