@@ -1,4 +1,3 @@
-# filepath: /c:/Users/rossw/Documents/bartenders_caddie/app.py
 from flask import Flask, render_template, request
 import json
 
@@ -10,6 +9,11 @@ with open('cocktails.json') as f:
 
 # Extract cocktail names and ingredients
 cocktails = {cocktail['name']: [ingredient['name'] for ingredient in cocktail['ingredients']] for cocktail in cocktail_data}
+
+# Extract unique flavor profiles
+flavor_profiles = set()
+for cocktail in cocktail_data:
+    flavor_profiles.update(cocktail.get('flavor_profile', []))
 
 def suggest_cocktails(available_ingredients):
     """
@@ -35,10 +39,6 @@ def suggest_cocktails(available_ingredients):
                 else:
                     missing_ingredients[ingredient] = 1
 
-    # Adjust the count for missing ingredients to only include those that would allow making a new cocktail
-    for ingredient in missing_ingredients:
-        missing_ingredients[ingredient] = sum(1 for cocktail, missing in almost_suggestions if len(missing) == 1 and ingredient in missing)
-
     return suggestions, almost_suggestions, missing_ingredients, ingredient_cocktail_count
 
 @app.route("/", methods=["GET", "POST"])
@@ -47,11 +47,13 @@ def index():
     missing_ingredients = {}
     ingredient_cocktail_count = {}
     filter_ingredient = None
+    filter_flavor_profile = None
 
     if request.method == "POST":
         available_ingredients = request.form.getlist("available_ingredients")
         missing_ingredients = request.form.getlist("missing_ingredients")
         filter_ingredient = request.form.get("filter_ingredient")
+        filter_flavor_profile = request.form.get("filter_flavor_profile")
 
         # Move unchecked available ingredients to missing ingredients
         available_ingredients = [ing for ing in available_ingredients if ing in request.form.getlist("available_ingredients")]
@@ -66,7 +68,11 @@ def index():
         suggested_cocktails = [(cocktail, ingredients) for cocktail, ingredients in suggested_cocktails if filter_ingredient in ingredients]
         almost_suggested_cocktails = [(cocktail, missing) for cocktail, missing in almost_suggested_cocktails if filter_ingredient in cocktails[cocktail]]
 
-    return render_template("index.html", suggestions=suggested_cocktails, almost_suggestions=almost_suggested_cocktails, available_ingredients=available_ingredients, missing_ingredients=missing_ingredients, ingredient_cocktail_count=ingredient_cocktail_count, filter_ingredient=filter_ingredient)
+    if filter_flavor_profile:
+        suggested_cocktails = [(cocktail['name'], cocktail['ingredients']) for cocktail in cocktail_data if filter_flavor_profile in cocktail.get('flavor_profile', []) and all(ingredient in available_ingredients for ingredient in [ingredient['name'] for ingredient in cocktail['ingredients']])]
+        almost_suggested_cocktails = [(cocktail['name'], [ingredient['name'] for ingredient in cocktail['ingredients'] if ingredient['name'] not in available_ingredients]) for cocktail in cocktail_data if filter_flavor_profile in cocktail.get('flavor_profile', []) and any(ingredient['name'] not in available_ingredients for ingredient in cocktail['ingredients']) and len([ingredient['name'] for ingredient in cocktail['ingredients'] if ingredient['name'] not in available_ingredients]) <= 2]
+
+    return render_template("index.html", suggestions=suggested_cocktails, almost_suggestions=almost_suggested_cocktails, available_ingredients=available_ingredients, missing_ingredients=missing_ingredients, ingredient_cocktail_count=ingredient_cocktail_count, filter_ingredient=filter_ingredient, flavor_profiles=sorted(flavor_profiles), filter_flavor_profile=filter_flavor_profile)
 
 if __name__ == "__main__":
     app.run(debug=True) #REMOVE DEBUG=TRUE BEFORE DEPLOYMENT
