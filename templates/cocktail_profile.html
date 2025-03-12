@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ cocktail.name }}</title>
+</head>
+<body>
+    <h1>{{ cocktail.name }}</h1>
+
+    <h2>Occasion or Vibe:</h2>
+    <p>{{ cocktail.occasion_or_vibe }}</p>
+
+    <h2>Tasting Notes:</h2>
+    <p>{{ cocktail.tasting_notes }}</p>
+
+    <h2>Flavor Profile:</h2>
+    <ul>
+        {% for flavor in cocktail.flavor_profile %}
+            <li>{{ flavor }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Fun Fact:</h2>
+    <p>{{ cocktail.fun_fact }}</p>
+
+    <h2>Ingredients:</h2>
+    <ul>
+        {% for ingredient in cocktail.ingredients %}
+            <li>{{ ingredient.amount }} of {{ ingredient.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Recipe:</h2>
+    <p>{{ cocktail.recipe }}</p>
+
+    <h2>Pairing Ideas:</h2>
+    <ul>
+        {% for idea in cocktail.pairing_ideas %}
+            <li>{{ idea }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Similar Cocktails:</h2>
+    <ul>
+        {% for similar in cocktail.similar_cocktails %}
+            <li>{{ similar }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+</body>
+</html>
