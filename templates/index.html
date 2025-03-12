@@ -23,6 +23,21 @@
             document.getElementById('filter-flavor-profile').value = '';
             document.getElementById('filter-form').submit();
         }
+
+        function addIngredientToAvailableList(checkbox) {
+            const form = document.getElementById('update-ingredients-form');
+            if (checkbox.checked) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'available_ingredients';
+                input.value = checkbox.value;
+                form.appendChild(input);
+            } else {
+                const inputs = form.querySelectorAll(`input[name="available_ingredients"][value="${checkbox.value}"]`);
+                inputs.forEach(input => input.remove());
+            }
+            updateIngredients();
+        }
     </script>
 </head>
 <body>
@@ -43,16 +58,31 @@
         <button onclick="clearFilter()">Clear Filter</button>
     {% endif %}
 
-    <h2>Cocktails missing 1 or 2 ingredients{% if filter_ingredient %} with {{ filter_ingredient }}{% endif %}{% if filter_flavor_profile %} that are {{ filter_flavor_profile }}{% endif %}:</h2>
+    <h2>Cocktails missing 1 ingredient{% if filter_ingredient %} with {{ filter_ingredient }}{% endif %}{% if filter_flavor_profile %} that are {{ filter_flavor_profile }}{% endif %}:</h2>
     {% if almost_suggestions %}
+        {% set sorted_almost_suggestions = almost_suggestions|sort(attribute='1') %}
         <ul>
-            {% for cocktail, missing in almost_suggestions %}
-                <li>{{ cocktail }} (missing: {{ missing | join(', ') }})</li>
+            {% for cocktail, missing in sorted_almost_suggestions %}
+                {% if missing|length == 1 %}
+                    <li>{{ cocktail }} (missing: {{ missing | join(', ') }})</li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% else %}
         <p>Add some more ingredients for cocktail suggestions</p>
     {% endif %}
+
+    <h2>Ingredients List:</h2>
+    <ul>
+        {% for ingredient in sorted_ingredients %}
+            <li>
+                <input type="checkbox" name="ingredients_list" value="{{ ingredient }}" 
+                       {% if all_ingredients[ingredient] == 'available' %}checked{% endif %} 
+                       onchange="addIngredientToAvailableList(this)">
+                <span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient }}</span>
+            </li>
+        {% endfor %}
+    </ul>
 
     <form method="post" id="update-ingredients-form">
         {% if available_ingredients %}
@@ -60,24 +90,23 @@
             <ul>
                 {% for ingredient in available_ingredients %}
                     <li>
-                        <input type="checkbox" name="available_ingredients" value="{{ ingredient }}" checked onchange="updateIngredients()">
-                        {{ ingredient }} (<span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient_cocktail_count[ingredient] }} cocktails</span>)
+                        <input type="checkbox" name="available_ingredients" value="{{ ingredient }}" checked onchange="addIngredientToAvailableList(this)">
+                        <span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient }}</span> (<span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient_cocktail_count[ingredient] }} cocktails</span>)
                     </li>
                 {% endfor %}
             </ul>
         {% endif %}
 
-        {% if missing_ingredients %}
-            <h2>Missing Ingredients:</h2>
-            <ul>
-                {% for ingredient, count in missing_ingredients.items() %}
+        <h2>Missing Ingredients:</h2>
+        <ul>
+            {% for ingredient in sorted_ingredients %}
+                {% if all_ingredients[ingredient] == 'missing' %}
                     <li>
-                        <input type="checkbox" name="missing_ingredients" value="{{ ingredient }}" onchange="updateIngredients()">
-                        {{ ingredient }} (<span onclick="filterCocktails('{{ ingredient }}')">{{ count }} additional cocktails</span>)
+                        <span onclick="filterCocktails('{{ ingredient }}')">{{ ingredient }}</span> (<span onclick="filterCocktails('{{ ingredient }}')">{{ missing_ingredients[ingredient] }} additional cocktails</span>)
                     </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
     </form>
 
     <form method="post" id="filter-form">
