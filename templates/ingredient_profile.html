@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cocktails with {{ ingredient_name }}</title>
+</head>
+<body>
+    <h1>Cocktails with {{ ingredient_name }}</h1>
+    <ul>
+        {% for cocktail in filtered_cocktails %}
+            <li>
+                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                - {{ cocktail['flavor_profile'] | join(', ') }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Cocktails You Can Make with {{ ingredient_name }}</h2>
+    <ul>
+        {% for cocktail in filtered_cocktails_you_can_make %}
+            <li>
+                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                - {{ cocktail['flavor_profile'] | join(', ') }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+</body>
+</html>

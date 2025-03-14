@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Cocktails</title>
+</head>
+<body>
+    <h1>All Cocktails</h1>
+    <ul>
+        {% for cocktail in sorted_cocktails %}
+            <li>
+                {% if cocktail in cocktails_you_can_make %}
+                    <strong><a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a></strong>
+                    - You can make this cocktail
+                {% else %}
+                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                    - Ingredients: {% for ingredient in cocktail['ingredients'] %}{{ ingredient['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+</body>
+</html>

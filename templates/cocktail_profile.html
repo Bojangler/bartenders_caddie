@@ -43,7 +43,7 @@
     <h2>Similar Cocktails:</h2>
     <ul>
         {% for similar in cocktail.similar_cocktails %}
-            <li>{{ similar }}</li>
+            <li><a href="{{ url_for('cocktail_profile', cocktail_name=similar) }}">{{ similar }}</a></li>
         {% endfor %}
     </ul>
 

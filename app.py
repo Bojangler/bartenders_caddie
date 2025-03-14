@@ -20,7 +20,7 @@ def get_cocktails_you_can_make(inventory):
     available_cocktails = []
     for cocktail in cocktail_data:
         if all(ingredient['name'] in inventory for ingredient in cocktail['ingredients']):
-            available_cocktails.append(cocktail['name'])
+            available_cocktails.append(cocktail)
     return available_cocktails
 
 @app.route("/", methods=["GET", "POST"])
@@ -42,6 +42,21 @@ def cocktail_profile(cocktail_name):
     if cocktail is None:
         return "Cocktail not found", 404
     return render_template("cocktail_profile.html", cocktail=cocktail)
+
+@app.route("/all_cocktails")
+def all_cocktails():
+    sorted_cocktails = sorted(cocktail_data, key=lambda x: x['name'])
+    inventory = set(session.get('inventory', []))
+    cocktails_you_can_make = get_cocktails_you_can_make(inventory)
+    return render_template("all_cocktails.html", sorted_cocktails=sorted_cocktails, cocktails_you_can_make=cocktails_you_can_make)
+
+@app.route("/ingredient_profile/<ingredient_name>")
+def ingredient_profile(ingredient_name):
+    filtered_cocktails = [cocktail for cocktail in cocktail_data if any(ingredient['name'] == ingredient_name for ingredient in cocktail['ingredients'])]
+    inventory = set(session.get('inventory', []))
+    cocktails_you_can_make = get_cocktails_you_can_make(inventory)
+    filtered_cocktails_you_can_make = [cocktail for cocktail in filtered_cocktails if cocktail in cocktails_you_can_make]
+    return render_template("ingredient_profile.html", ingredient_name=ingredient_name, filtered_cocktails=filtered_cocktails, filtered_cocktails_you_can_make=filtered_cocktails_you_can_make)
 
 if __name__ == "__main__":
     app.run(debug=True) #REMOVE DEBUG=TRUE BEFORE DEPLOYMENT
