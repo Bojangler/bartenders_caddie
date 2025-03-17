@@ -25,6 +25,9 @@
                         <li>
                             <input type="checkbox" name="ingredients" value="{{ ingredient }}" {% if ingredient in inventory %}checked{% endif %}>
                             <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
+                            {% if ingredient not in inventory and additional_cocktails_counts[ingredient] > 0 %}
+                                - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -43,6 +46,22 @@
                 {% endfor %}
             </ul>
             <a href="{{ url_for('all_cocktails') }}">View All Cocktails</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <h2>Ingredients with Additional Cocktails:</h2>
+            <ul>
+                {% for ingredient in sorted_additional_ingredients %}
+                    {% if ingredient not in inventory %}
+                        <li>
+                            <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
+                            - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </body>

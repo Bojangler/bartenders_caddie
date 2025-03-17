@@ -14,7 +14,10 @@
                     - You can make this cocktail
                 {% else %}
                     <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                    - Ingredients: {% for ingredient in cocktail['ingredients'] %}{{ ingredient['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}
+                    - Missing {{ cocktail['missing_ingredients']|length }} ingredients: 
+                    {% for ingredient in cocktail['missing_ingredients'] %}
+                        {{ ingredient }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
                 {% endif %}
             </li>
         {% endfor %}
