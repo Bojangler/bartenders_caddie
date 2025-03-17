@@ -3,50 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ cocktail.name }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>{{ cocktail.name }}</h1>
+    <div class="container">
+        <h1 class="my-4">{{ cocktail.name }}</h1>
 
-    <h2>Occasion or Vibe:</h2>
-    <p>{{ cocktail.occasion_or_vibe }}</p>
+        <p>{{ cocktail.tasting_notes }}</p>
 
-    <h2>Tasting Notes:</h2>
-    <p>{{ cocktail.tasting_notes }}</p>
+       
+        <p>{{ cocktail.fun_fact }}</p>
 
-    <h2>Flavor Profile:</h2>
-    <ul>
-        {% for flavor in cocktail.flavor_profile %}
-            <li>{{ flavor }}</li>
-        {% endfor %}
-    </ul>
+        <h4>When to serve it:</h4>
+        <p>{{ cocktail.occasion_or_vibe }}</p>
 
-    <h2>Fun Fact:</h2>
-    <p>{{ cocktail.fun_fact }}</p>
+        <h4>What it tastes like:</h4>
+        <p>{{ cocktail.flavor_profile | join(', ') }}</p>
 
-    <h2>Ingredients:</h2>
-    <ul>
-        {% for ingredient in cocktail.ingredients %}
-            <li>{{ ingredient.amount }} of {{ ingredient.name }}</li>
-        {% endfor %}
-    </ul>
+        <h4>What you need to make it:</h4>
+        <ul class="list-group mb-4">
+            {% for ingredient in cocktail.ingredients %}
+                <li class="list-group-item">{{ ingredient.amount }} of {{ ingredient.name }}</li>
+            {% endfor %}
+        </ul>
 
-    <h2>Recipe:</h2>
-    <p>{{ cocktail.recipe }}</p>
+        <h4>How to make it:</h4>
+        <p>{{ cocktail.recipe }}</p>
 
-    <h2>Pairing Ideas:</h2>
-    <ul>
-        {% for idea in cocktail.pairing_ideas %}
-            <li>{{ idea }}</li>
-        {% endfor %}
-    </ul>
+        <h4>What to serve it with:</h4>
+        <ul class="list-group mb-4">
+            {% for idea in cocktail.pairing_ideas %}
+                <li class="list-group-item">{{ idea }}</li>
+            {% endfor %}
+        </ul>
 
-    <h2>Similar Cocktails:</h2>
-    <ul>
-        {% for similar in cocktail.similar_cocktails %}
-            <li><a href="{{ url_for('cocktail_profile', cocktail_name=similar) }}">{{ similar }}</a></li>
-        {% endfor %}
-    </ul>
+        <h4>Try these as well:</h4>
+        <ul class="list-group mb-4">
+            {% for similar in cocktail.similar_cocktails %}
+                <li class="list-group-item"><a href="{{ url_for('cocktail_profile', cocktail_name=similar) }}">{{ similar }}</a></li>
+            {% endfor %}
+        </ul>
 
-    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

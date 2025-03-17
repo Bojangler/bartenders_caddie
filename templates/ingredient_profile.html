@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Cocktails with {{ ingredient_name }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Cocktails with {{ ingredient_name }}</h1>
-    <ul>
-        {% for cocktail in filtered_cocktails %}
-            <li>
-                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                - {{ cocktail['flavor_profile'] | join(', ') }}
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1 class="my-4">Cocktails with {{ ingredient_name }}</h1>
+        
+        <h4>Cocktails you can make with {{ ingredient_name }}</h4>
+        <ul class="list-group mb-4">
+            {% for cocktail in filtered_cocktails_you_can_make %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                    - {{ cocktail['flavor_profile'] | join(', ') }}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <h4>All cocktails with {{ ingredient_name }}</h4>
+        <ul class="list-group mb-4">
+            {% for cocktail in filtered_cocktails %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                    - {{ cocktail['flavor_profile'] | join(', ') }}
+                </li>
+            {% endfor %}
+        </ul>
 
-    <h2>Cocktails You Can Make with {{ ingredient_name }}</h2>
-    <ul>
-        {% for cocktail in filtered_cocktails_you_can_make %}
-            <li>
-                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                - {{ cocktail['flavor_profile'] | join(', ') }}
-            </li>
-        {% endfor %}
-    </ul>
+        
 
-    <p>Add this ingredient and you can make {{ additional_cocktails_count }} additional cocktails</p>
 
-    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

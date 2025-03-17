@@ -3,66 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>Bartender's Caddie Beta</title>
-    <style>
-        .container {
-            display: flex;
-            justify-content: space-between;
-        }
-        .column {
-            width: 45%;
-        }
-    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Bartender's Caddie Beta</h1>
-
     <div class="container">
-        <div class="column">
-            <form method="post" action="{{ url_for('index') }}" id="update-ingredients-form">
-                <h2>Ingredients List:</h2>
-                <ul>
-                    {% for ingredient in sorted_ingredients %}
-                        <li>
-                            <input type="checkbox" name="ingredients" value="{{ ingredient }}" {% if ingredient in inventory %}checked{% endif %}>
-                            <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
-                            {% if ingredient not in inventory and additional_cocktails_counts[ingredient] > 0 %}
-                                - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
-                            {% endif %}
+        <h1 class="my-4">Bartender's Caddie Beta</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post" action="{{ url_for('index') }}" id="update-ingredients-form">
+                    <h2>Ingredients List:</h2>
+                    <ul class="list-group mb-4">
+                        {% for ingredient in sorted_ingredients %}
+                            <li class="list-group-item">
+                                <input type="checkbox" name="ingredients" value="{{ ingredient }}" {% if ingredient in inventory %}checked{% endif %}>
+                                <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
+                                {% if ingredient not in inventory and additional_cocktails_counts[ingredient] > 0 %}
+                                    - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="btn btn-primary">Update Ingredients</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h2>Cocktails You Can Make:</h2>
+                <ul class="list-group mb-4">
+                    {% for cocktail in cocktails_you_can_make %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                            - {{ cocktail['flavor_profile'] | join(', ') }}
                         </li>
                     {% endfor %}
                 </ul>
-                <button type="submit">Update Ingredients</button>
-            </form>
-        </div>
+                <a href="{{ url_for('all_cocktails') }}" class="btn btn-primary">View All Cocktails</a>
 
-        <div class="column">
-            <h2>Cocktails You Can Make:</h2>
-            <ul>
-                {% for cocktail in cocktails_you_can_make %}
-                    <li>
-                        <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                        - {{ cocktail['flavor_profile'] | join(', ') }}
-                    </li>
-                {% endfor %}
-            </ul>
-            <a href="{{ url_for('all_cocktails') }}">View All Cocktails</a>
+                <h2 class="mt-4">Buy these ingredients to make new cocktails:</h2>
+                <ul class="list-group mb-4">
+                    {% for ingredient in sorted_additional_ingredients %}
+                        {% if ingredient not in inventory %}
+                            <li class="list-group-item">
+                                <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
+                                - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="column">
-            <h2>Ingredients with Additional Cocktails:</h2>
-            <ul>
-                {% for ingredient in sorted_additional_ingredients %}
-                    {% if ingredient not in inventory %}
-                        <li>
-                            <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
-                            - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

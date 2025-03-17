@@ -3,34 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>All Cocktails</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>All Cocktails</h1>
+    <div class="container">
+        <h1 class="my-4">All Cocktails</h1>
 
-    <ul>
-        {% for cocktail in sorted_cocktails %}
-            <li>
-                {% if cocktail in cocktails_you_can_make %}
-                    <strong><a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a></strong>
-                    - You can make this cocktail
-                {% else %}
-                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                    - Missing {{ cocktail['missing_ingredients']|length }} ingredients: 
-                    {% for ingredient in cocktail['missing_ingredients'] %}
-                        {{ ingredient }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+        <ul class="list-group mb-4">
+            {% for cocktail in sorted_cocktails %}
+                <li class="list-group-item">
+                    {% if cocktail in cocktails_you_can_make %}
+                        <strong><a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a></strong>
+                        - You can make this cocktail
+                    {% else %}
+                        <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                        - Missing {{ cocktail['missing_ingredients']|length }} ingredients: 
+                        {% for ingredient in cocktail['missing_ingredients'] %}
+                            {{ ingredient }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
 
-    <h2>Flavor Profiles</h2>
-    <ul>
-        {% for flavor in sorted_flavor_profiles %}
-            <li><a href="{{ url_for('flavor_profile', flavor=flavor) }}">{{ flavor }}</a></li>
-        {% endfor %}
-    </ul>
+        <h2 class="my-4">Flavor Profiles</h2>
+        <ul class="list-group mb-4">
+            {% for flavor in sorted_flavor_profiles %}
+                <li class="list-group-item"><a href="{{ url_for('flavor_profile', flavor=flavor) }}">{{ flavor }}</a></li>
+            {% endfor %}
+        </ul>
 
-    <a href="{{ url_for('index') }}">Back to Ingredients List</a>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
