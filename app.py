@@ -84,15 +84,46 @@ def flavor_profile(flavor):
 
 @app.route("/ingredient_profile/<ingredient_name>")
 def ingredient_profile(ingredient_name):
-    filtered_cocktails = [cocktail for cocktail in cocktail_data if any(ingredient['name'] == ingredient_name for ingredient in cocktail['ingredients'])]
+    # Filter cocktails that include the given ingredient
+    filtered_cocktails = [
+        cocktail for cocktail in cocktail_data
+        if any(ingredient['name'] == ingredient_name for ingredient in cocktail['ingredients'])
+    ]
+
+    # Get a dictionary of associated ingredients and their cocktail counts
+    associated_ingredients = {}
+    for cocktail in filtered_cocktails:
+        for ingredient in cocktail['ingredients']:
+            if ingredient['name'] != ingredient_name:
+                if ingredient['name'] not in associated_ingredients:
+                    associated_ingredients[ingredient['name']] = 0
+                associated_ingredients[ingredient['name']] += 1
+
+    # Convert the dictionary to a list of tuples (ingredient, count) and sort by count (descending)
+    associated_ingredients = sorted(
+        associated_ingredients.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    # Filter cocktails the user can make
     inventory = set(session.get('inventory', []))
     cocktails_you_can_make = get_cocktails_you_can_make(inventory)
-    filtered_cocktails_you_can_make = [cocktail for cocktail in filtered_cocktails if cocktail in cocktails_you_can_make]
-    
+    filtered_cocktails_you_can_make = [
+        cocktail for cocktail in filtered_cocktails if cocktail in cocktails_you_can_make
+    ]
+
     # Count the number of distinct cocktails missing only this ingredient
     additional_cocktails_count = count_additional_cocktails(inventory, ingredient_name)
-    
-    return render_template("ingredient_profile.html", ingredient_name=ingredient_name, filtered_cocktails=filtered_cocktails, filtered_cocktails_you_can_make=filtered_cocktails_you_can_make, additional_cocktails_count=additional_cocktails_count)
+
+    return render_template(
+        "ingredient_profile.html",
+        ingredient_name=ingredient_name,
+        filtered_cocktails=filtered_cocktails,
+        filtered_cocktails_you_can_make=filtered_cocktails_you_can_make,
+        additional_cocktails_count=additional_cocktails_count,
+        associated_ingredients=associated_ingredients
+    )
 
 if __name__ == "__main__":
     app.run(debug=True) #REMOVE DEBUG=TRUE BEFORE DEPLOYMENT

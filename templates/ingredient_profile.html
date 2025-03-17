@@ -8,7 +8,7 @@
 <body>
     <div class="container">
         <h1 class="my-4">Cocktails with {{ ingredient_name }}</h1>
-        
+
         <h4>Cocktails you can make with {{ ingredient_name }}</h4>
         <ul class="list-group mb-4">
             {% for cocktail in filtered_cocktails_you_can_make %}
@@ -18,7 +18,7 @@
                 </li>
             {% endfor %}
         </ul>
-        
+
         <h4>All cocktails with {{ ingredient_name }}</h4>
         <ul class="list-group mb-4">
             {% for cocktail in filtered_cocktails %}
@@ -29,8 +29,14 @@
             {% endfor %}
         </ul>
 
-        
-
+        <h4>Commonly mixed with {{ ingredient_name }}</h4>
+<ul class="list-group mb-4">
+    {% for associated_ingredient, count in associated_ingredients %}
+        <li class="list-group-item">
+            {{ associated_ingredient }} - Appears in {{ count }} cocktail{% if count > 1 %}s{% endif %}
+        </li>
+    {% endfor %}
+</ul>
 
         <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
     </div>
