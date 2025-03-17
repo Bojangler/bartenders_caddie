@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>All Cocktails</h1>
+
     <ul>
         {% for cocktail in sorted_cocktails %}
             <li>
@@ -22,6 +23,14 @@
             </li>
         {% endfor %}
     </ul>
+
+    <h2>Flavor Profiles</h2>
+    <ul>
+        {% for flavor in sorted_flavor_profiles %}
+            <li><a href="{{ url_for('flavor_profile', flavor=flavor) }}">{{ flavor }}</a></li>
+        {% endfor %}
+    </ul>
+
     <a href="{{ url_for('index') }}">Back to Ingredients List</a>
 </body>
 </html>

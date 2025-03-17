@@ -16,6 +16,14 @@ for cocktail in cocktail_data:
 
 sorted_ingredients = sorted(all_ingredients)
 
+# Extract unique flavor profiles
+all_flavor_profiles = set()
+for cocktail in cocktail_data:
+    for flavor in cocktail['flavor_profile']:
+        all_flavor_profiles.add(flavor)
+
+sorted_flavor_profiles = sorted(all_flavor_profiles)
+
 def get_cocktails_you_can_make(inventory):
     available_cocktails = []
     for cocktail in cocktail_data:
@@ -65,7 +73,14 @@ def all_cocktails():
         missing_ingredients = [ingredient['name'] for ingredient in cocktail['ingredients'] if ingredient['name'] not in inventory]
         cocktail['missing_ingredients'] = missing_ingredients
     
-    return render_template("all_cocktails.html", sorted_cocktails=sorted_cocktails, cocktails_you_can_make=cocktails_you_can_make, inventory=inventory)
+    return render_template("all_cocktails.html", sorted_cocktails=sorted_cocktails, cocktails_you_can_make=cocktails_you_can_make, inventory=inventory, sorted_flavor_profiles=sorted_flavor_profiles)
+
+@app.route("/flavor_profile/<flavor>")
+def flavor_profile(flavor):
+    filtered_cocktails = [cocktail for cocktail in cocktail_data if flavor in cocktail['flavor_profile']]
+    inventory = set(session.get('inventory', []))
+    cocktails_you_can_make = get_cocktails_you_can_make(inventory)
+    return render_template("all_cocktails.html", sorted_cocktails=filtered_cocktails, cocktails_you_can_make=cocktails_you_can_make, inventory=inventory, sorted_flavor_profiles=sorted_flavor_profiles)
 
 @app.route("/ingredient_profile/<ingredient_name>")
 def ingredient_profile(ingredient_name):
