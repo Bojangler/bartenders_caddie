@@ -7,8 +7,13 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="my-4">All Cocktails</h1>
+        {% extends "base.html" %}
 
+        {% block title %}Browse Cocktails - Bartender's Caddie{% endblock %}
+        
+        {% block content %}
+        <h1 class="my-4">All Cocktails</h1>
+        
         <ul class="list-group mb-4">
             {% for cocktail in sorted_cocktails %}
                 <li class="list-group-item">
@@ -25,13 +30,7 @@
                 </li>
             {% endfor %}
         </ul>
-
-        <h2 class="my-4">Flavor Profiles</h2>
-        <ul class="list-group mb-4">
-            {% for flavor in sorted_flavor_profiles %}
-                <li class="list-group-item"><a href="{{ url_for('flavor_profile', flavor=flavor) }}">{{ flavor }}</a></li>
-            {% endfor %}
-        </ul>
+        {% endblock %}
 
         <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
     </div>

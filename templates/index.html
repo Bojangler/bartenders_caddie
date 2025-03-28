@@ -7,8 +7,13 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="my-4">Bartender's Caddie Beta</h1>
+        {% extends "base.html" %}
 
+        {% block title %}Home - Bartender's Caddie{% endblock %}
+        
+        {% block content %}
+        <h1 class="my-4">Bartender's Caddie Beta</h1>
+        
         <div class="row">
             <div class="col-md-6">
                 <form method="post" action="{{ url_for('index') }}" id="update-ingredients-form">
@@ -27,7 +32,7 @@
                     <button type="submit" class="btn btn-primary">Update Ingredients</button>
                 </form>
             </div>
-
+        
             <div class="col-md-6">
                 <h2>Cocktails You Can Make:</h2>
                 <ul class="list-group mb-4">
@@ -39,7 +44,7 @@
                     {% endfor %}
                 </ul>
                 <a href="{{ url_for('all_cocktails') }}" class="btn btn-primary">View All Cocktails</a>
-
+        
                 <h2 class="mt-4">Buy these ingredients to make new cocktails:</h2>
                 <ul class="list-group mb-4">
                     {% for ingredient in sorted_additional_ingredients %}
@@ -53,7 +58,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+        {% endblock %}
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

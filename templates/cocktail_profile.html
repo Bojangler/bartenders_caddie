@@ -7,6 +7,11 @@
 </head>
 <body>
     <div class="container">
+        {% extends "base.html" %}
+
+        {% block title %}Browse Cocktails - Bartender's Caddie{% endblock %}
+
+        {% block content %}
         <h1 class="my-4">{{ cocktail.name }}</h1>
 
         <p>{{ cocktail.tasting_notes }}</p>
@@ -43,6 +48,7 @@
                 <li class="list-group-item"><a href="{{ url_for('cocktail_profile', cocktail_name=similar) }}">{{ similar }}</a></li>
             {% endfor %}
         </ul>
+        {% endblock %}
 
         <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
     </div>

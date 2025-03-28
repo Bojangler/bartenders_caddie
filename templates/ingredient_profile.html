@@ -7,6 +7,12 @@
 </head>
 <body>
     <div class="container">
+        {% extends "base.html" %}
+
+        {% block title %}Home - Bartender's Caddie{% endblock %}
+
+        {% block content %}
+        
         <h1 class="my-4">Cocktails with {{ ingredient_name }}</h1>
 
         <h4>Cocktails you can make with {{ ingredient_name }}</h4>
@@ -37,7 +43,7 @@
         </li>
     {% endfor %}
 </ul>
-
+{% endblock %}
         <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
     </div>
 

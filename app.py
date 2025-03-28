@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, session, url_for
 import json
+import os  # Import os for environment variable access
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a secure secret key
+app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')  # Use a secure secret key from environment variables
 
 # Load cocktail data from JSON file
 with open('cocktails.json') as f:
@@ -126,4 +127,4 @@ def ingredient_profile(ingredient_name):
     )
 
 if __name__ == "__main__":
-    app.run(debug=True) #REMOVE DEBUG=TRUE BEFORE DEPLOYMENT
+    app.run()  # Replace with app.run(debug=True) if you want to run in debug mode
