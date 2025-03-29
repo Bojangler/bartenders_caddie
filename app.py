@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, url_for
+from flask import Flask, render_template, request, session, url_for, redirect
 import json
 import os  # Import os for environment variable access
 
@@ -39,12 +39,15 @@ def count_additional_cocktails(inventory, ingredient_name):
 def index():
     if 'inventory' not in session:
         session['inventory'] = []
+        print("Initialized inventory in session.")  # Debugging line
 
     if request.method == "POST":
         selected_ingredients = request.form.getlist('ingredients')
         session['inventory'] = selected_ingredients
+        print(f"Updated inventory: {session['inventory']}")  # Debugging line
 
     inventory = set(session['inventory'])
+    print(f"Current inventory: {inventory}")  # Debugging line
     cocktails_you_can_make = get_cocktails_you_can_make(inventory)
     additional_cocktails_counts = {ingredient: count_additional_cocktails(inventory, ingredient) for ingredient in sorted_ingredients}
     
@@ -55,7 +58,14 @@ def index():
         reverse=True
     )
     
-    return render_template("index.html", sorted_ingredients=sorted_ingredients, inventory=inventory, cocktails_you_can_make=cocktails_you_can_make, additional_cocktails_counts=additional_cocktails_counts, sorted_additional_ingredients=sorted_additional_ingredients)
+    return render_template(
+        "index.html",
+        sorted_ingredients=sorted_ingredients,
+        inventory=inventory,
+        cocktails_you_can_make=cocktails_you_can_make,
+        additional_cocktails_counts=additional_cocktails_counts,
+        sorted_additional_ingredients=sorted_additional_ingredients
+    )
 
 @app.route("/cocktail_profile/<cocktail_name>")
 def cocktail_profile(cocktail_name):
@@ -126,5 +136,20 @@ def ingredient_profile(ingredient_name):
         associated_ingredients=associated_ingredients
     )
 
+@app.route("/add_to_inventory", methods=["POST"])
+def add_to_inventory():
+    print("add_to_inventory route triggered.")  # Debugging line
+    ingredient = request.form.get("ingredient")
+    print(f"Ingredient received: {ingredient}")  # Debugging line
+    if "inventory" not in session:
+        session["inventory"] = []
+        print("Initialized inventory in session.")  # Debugging line
+    if ingredient and ingredient not in session["inventory"]:
+        session["inventory"].append(ingredient)
+        print(f"Added {ingredient} to inventory.")  # Debugging line
+    else:
+        print(f"{ingredient} is already in inventory or invalid.")  # Debugging line
+    return redirect(url_for("index", expand="ingredients"))
+
 if __name__ == "__main__":
-    app.run()  # Replace with app.run(debug=True) if you want to run in debug mode
+    app.run(debug=True)  # Replace with app.run(debug=True) if you want to run in debug mode

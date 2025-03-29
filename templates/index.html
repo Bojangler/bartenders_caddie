@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bartender's Caddie Beta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Add responsive meta tag -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -12,28 +13,11 @@
         {% block title %}Home - Bartender's Caddie{% endblock %}
         
         {% block content %}
-        <h1 class="my-4">Bartender's Caddie Beta</h1>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <form method="post" action="{{ url_for('index') }}" id="update-ingredients-form">
-                    <h2>Ingredients List:</h2>
-                    <ul class="list-group mb-4">
-                        {% for ingredient in sorted_ingredients %}
-                            <li class="list-group-item">
-                                <input type="checkbox" name="ingredients" value="{{ ingredient }}" {% if ingredient in inventory %}checked{% endif %}>
-                                <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
-                                {% if ingredient not in inventory and additional_cocktails_counts[ingredient] > 0 %}
-                                    - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <button type="submit" class="btn btn-primary">Update Ingredients</button>
-                </form>
-            </div>
-        
-            <div class="col-md-6">
+        <h1 class="my-4 text-center">Bartender's Caddie Beta</h1> <!-- Center the title -->
+
+        <!-- Cocktails You Can Make Section -->
+        <div class="mb-4">
+            {% if cocktails_you_can_make %}
                 <h2>Cocktails You Can Make:</h2>
                 <ul class="list-group mb-4">
                     {% for cocktail in cocktails_you_can_make %}
@@ -43,9 +27,43 @@
                         </li>
                     {% endfor %}
                 </ul>
-                <a href="{{ url_for('all_cocktails') }}" class="btn btn-primary">View All Cocktails</a>
-        
-                <h2 class="mt-4">Buy these ingredients to make new cocktails:</h2>
+                <a href="{{ url_for('all_cocktails') }}" class="btn btn-primary btn-block">View All Cocktails</a> <!-- Full-width button -->
+            {% else %}
+                <p class="text-center text-muted">Add ingredients to your inventory to see what you can make!</p>
+            {% endif %}
+        </div>
+
+        <!-- Ingredients List Section -->
+        <div class="mb-4">
+            <h2>
+                <button class="btn btn-link text-decoration-none" type="button" data-toggle="collapse" data-target="#ingredients-list" aria-expanded="{{ 'true' if request.args.get('expand') == 'ingredients' else 'false' }}" aria-controls="ingredients-list">
+                    Ingredients List:
+                </button>
+            </h2>
+            <div id="ingredients-list" class="collapse {% if request.args.get('expand') == 'ingredients' %}show{% endif %}">
+                <form method="post" action="{{ url_for('index', expand='ingredients') }}">
+                    <ul class="list-group mb-4">
+                        {% for ingredient in sorted_ingredients %}
+                            <li class="list-group-item">
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" name="ingredients" value="{{ ingredient }}" {% if ingredient in inventory %}checked{% endif %} class="mr-2">
+                                    <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}" class="ingredient-name">{{ ingredient }}</a>
+                                </div>
+                                {% if ingredient not in inventory and additional_cocktails_counts[ingredient] > 0 %}
+                                    <small class="text-muted">- Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails</small>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="btn btn-primary btn-block">Update Inventory</button> <!-- Full-width button -->
+                </form>
+            </div>
+        </div>
+
+        <!-- Additional Ingredients Section -->
+        <div class="mb-4">
+            {% if sorted_additional_ingredients %}
+                <h2>Buy these ingredients to make new cocktails:</h2>
                 <ul class="list-group mb-4">
                     {% for ingredient in sorted_additional_ingredients %}
                         {% if ingredient not in inventory %}
@@ -56,9 +74,10 @@
                         {% endif %}
                     {% endfor %}
                 </ul>
-            </div>
+            {% endif %}
         </div>
         {% endblock %}
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
