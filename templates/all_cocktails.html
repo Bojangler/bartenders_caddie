@@ -18,7 +18,7 @@ Browse Cocktails - Bartender's Caddie
                     <span class="text-success">(You can make this cocktail)</span>
                 {% else %}
                     <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                    <span class="text-muted">- You need these {{ cocktail['missing_ingredients']|length }} ingredients:</span>
+                    <span class="text-py">- You need these {{ cocktail['missing_ingredients']|length }} ingredients:</span>
                     <small>
                         {% for ingredient in cocktail['missing_ingredients'] %}
                             {{ ingredient }}{% if not loop.last %}, {% endif %}
@@ -38,6 +38,6 @@ Browse Cocktails - Bartender's Caddie
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

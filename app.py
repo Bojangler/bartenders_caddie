@@ -74,7 +74,7 @@ def index():
 
 @app.route("/cocktail_profile/<cocktail_name>")
 def cocktail_profile(cocktail_name):
-     # Ensure inventory is initialized
+    # Ensure inventory is initialized
     initialize_inventory()
 
     # Find the cocktail by name
@@ -106,6 +106,7 @@ def cocktail_profile(cocktail_name):
         sorted_ingredients=sorted_ingredients,
         additional_cocktails_counts=additional_cocktails_counts
     )
+
 @app.route("/all_cocktails")
 def all_cocktails():
     # Sort cocktails alphabetically

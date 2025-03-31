@@ -9,46 +9,55 @@
     
     {% extends "base.html" %}
 
-    {% block title %}
-    {{ cocktail['name'] }} - Bartender's Caddie
-    {% endblock %}
+{% block title %}
+{{ cocktail['name'] }} - Bartender's Caddie
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h3 class="my-4 text-center">{{ cocktail['name'] }}</h3>
+    <h6 class="text-center">{{ cocktail['fun_fact'] }}</h6>
+    <h6 class="text-center">{{ cocktail['tasting_notes'] }}</h6>
+    <h6 class="text-center">Perfect for {{ cocktail['occasion_or_vibe'] }}</h6>
     
-    {% block content %}
-    <div class="container">
-        <h3 class="my-4 text-center">{{ cocktail['name'] }}</h3>
-        <p><strong>Flavor Profile:</strong> {{ cocktail['flavor_profile'] | join(', ') }}</p>
+    <h4>Ingredients:</h4>
+    <ul class="list-group mb-4">
+        {% for ingredient in cocktail['ingredients'] %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ ingredient['name'] }} - <strong>{{ ingredient['amount'] }}</strong></span>
+                {% if ingredient['name'] not in inventory %}
+                    <span class="badge bg-danger">Missing</span>
+                {% else %}
+                    <span class="badge bg-success">Available</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if missing_ingredients %}
+        <p class="text-danger">You are missing {{ missing_ingredients | length }} ingredient(s): {{ missing_ingredients | join(', ') }}</p>
+    {% else %}
+        <p class="text-success">You have all the ingredients to make this cocktail!</p>
+    {% endif %}
+
     
-        <h4>Ingredients:</h4>
-        <ul class="list-group mb-4">
-            {% for ingredient in cocktail['ingredients'] %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ ingredient['name'] }}
-                    {% if ingredient['name'] not in inventory %}
-                        <span class="badge bg-danger">Missing</span>
-                    {% else %}
-                        <span class="badge bg-success">Available</span>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
     
-        {% if missing_ingredients %}
-            <p class="text-muted">You are missing {{ missing_ingredients | length }} ingredient(s): {{ missing_ingredients | join(', ') }}</p>
-        {% else %}
-            <p class="text-success">You have all the ingredients to make this cocktail!</p>
-        {% endif %}
+
+    <h4>Recipe:</h4>
+    <p>{{ cocktail['recipe'] }}</p>
+
     
-        <p class="text-center">
-            <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
-        </p>
-    </div>
-    {% endblock %}
+
+    
+</div>
+{% endblock %}
 
         <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
