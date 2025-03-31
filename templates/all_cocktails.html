@@ -1,38 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Cocktails</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        {% extends "base.html" %}
+{% extends "base.html" %}
 
-        {% block title %}Browse Cocktails - Bartender's Caddie{% endblock %}
-        
-        {% block content %}
-        <h1 class="my-4">All Cocktails</h1>
-        
-        <ul class="list-group mb-4">
-            {% for cocktail in sorted_cocktails %}
-                <li class="list-group-item">
-                    {% if cocktail in cocktails_you_can_make %}
-                        <strong><a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a></strong>
-                        - You can make this cocktail
-                    {% else %}
-                        <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                        - Missing {{ cocktail['missing_ingredients']|length }} ingredients: 
-                        {% for ingredient in cocktail['missing_ingredients'] %}
-                            {{ ingredient }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-        {% endblock %}
+{% block title %}
+Browse Cocktails - Bartender's Caddie
+{% endblock %}
 
-        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+{% block content %}
+<h3 class="my-4 text-center">All Cocktails</h3> <!-- Updated to match index.html styles -->
+
+<ul class="list-group mb-4">
+    {% for cocktail in sorted_cocktails %}
+        <li class="list-group-item">
+            {% if cocktail in cocktails_you_can_make %}
+                <strong>
+                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                </strong>
+                - You can make this cocktail
+            {% else %}
+                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                - Missing {{ cocktail['missing_ingredients']|length }} ingredients:
+                {% for ingredient in cocktail['missing_ingredients'] %}
+                    {{ ingredient }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<p class="text-center">
+    <a href="{{ url_for('index') }}" class="text-primary">Back to Ingredients List</a> <!-- Changed to text link for consistency -->
+</p>
+{% endblock %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

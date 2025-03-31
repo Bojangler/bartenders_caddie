@@ -76,16 +76,30 @@ def cocktail_profile(cocktail_name):
 
 @app.route("/all_cocktails")
 def all_cocktails():
-    sorted_cocktails = sorted(cocktail_data, key=lambda x: x['name'])
-    inventory = set(session.get('inventory', []))
-    cocktails_you_can_make = get_cocktails_you_can_make(inventory)
-    
-    for cocktail in sorted_cocktails:
-        missing_ingredients = [ingredient['name'] for ingredient in cocktail['ingredients'] if ingredient['name'] not in inventory]
-        cocktail['missing_ingredients'] = missing_ingredients
-    
-    return render_template("all_cocktails.html", sorted_cocktails=sorted_cocktails, cocktails_you_can_make=cocktails_you_can_make, inventory=inventory, sorted_flavor_profiles=sorted_flavor_profiles)
+    sorted_cocktails = []
+    inventory = session.get('inventory', [])
 
+    for cocktail in cocktail_data:
+        missing_ingredients = [
+            ingredient['name']
+            for ingredient in cocktail['ingredients']
+            if ingredient['name'] not in inventory
+        ]
+        sorted_cocktails.append({
+            'name': cocktail['name'],
+            'flavor_profile': cocktail['flavor_profile'],
+            'missing_ingredients': missing_ingredients
+        })
+
+    cocktails_you_can_make = [
+        cocktail for cocktail in sorted_cocktails if not cocktail['missing_ingredients']
+    ]
+
+    return render_template(
+        "all_cocktails.html",
+        sorted_cocktails=sorted_cocktails,
+        cocktails_you_can_make=cocktails_you_can_make
+    )
 @app.route("/flavor_profile/<flavor>")
 def flavor_profile(flavor):
     filtered_cocktails = [cocktail for cocktail in cocktail_data if flavor in cocktail['flavor_profile']]
