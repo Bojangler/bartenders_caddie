@@ -1,4 +1,10 @@
+{% extends "base.html" %}
 
+{% block title %}
+Bartender's Caddie Beta
+{% endblock %}
+
+{% block content %}
     
 
     <!-- Ingredients Modal -->
@@ -32,20 +38,15 @@
     </div>
 
     <!-- Main Content -->
-    {% extends "base.html" %}
 
-{% block title %}
-Bartender's Caddie Beta
-{% endblock %}
 
-{% block content %}
+
 <div class="container">
     
-
         <!-- Cocktails You Can Make Section -->
         <div class="mb-4">
             {% if cocktails_you_can_make %}
-                <h3>Cocktails You Can Make</h3>
+                <h3 class="mt-4">Cocktails You Can Make</h3>
                 <p>You have everything needed to make these cocktails</p>
                 <ul class="list-group mb-4">
                     {% for cocktail in cocktails_you_can_make %}
