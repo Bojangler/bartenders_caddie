@@ -5,30 +5,34 @@ Browse Cocktails - Bartender's Caddie
 {% endblock %}
 
 {% block content %}
-<h3 class="my-4 text-center">All Cocktails</h3> <!-- Updated to match index.html styles -->
+<div class="container">
+    <h3 class="my-4 text-center">All Cocktails</h3> <!-- Updated to match index.html styles -->
 
-<ul class="list-group mb-4">
-    {% for cocktail in sorted_cocktails %}
-        <li class="list-group-item">
-            {% if cocktail in cocktails_you_can_make %}
-                <strong>
+    <ul class="list-group mb-4">
+        {% for cocktail in sorted_cocktails %}
+            <li class="list-group-item">
+                {% if cocktail in cocktails_you_can_make %}
+                    <strong>
+                        <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                    </strong>
+                    <span class="text-success">(You can make this cocktail)</span>
+                {% else %}
                     <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                </strong>
-                - You can make this cocktail
-            {% else %}
-                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                - Missing {{ cocktail['missing_ingredients']|length }} ingredients:
-                {% for ingredient in cocktail['missing_ingredients'] %}
-                    {{ ingredient }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            {% endif %}
-        </li>
-    {% endfor %}
-</ul>
+                    <span class="text-muted">- You need these {{ cocktail['missing_ingredients']|length }} ingredients:</span>
+                    <small>
+                        {% for ingredient in cocktail['missing_ingredients'] %}
+                            {{ ingredient }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </small>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 
-<p class="text-center">
-    <a href="{{ url_for('index') }}" class="text-primary">Back to Ingredients List</a> <!-- Changed to text link for consistency -->
-</p>
+    <p class="text-center">
+        <a href="{{ url_for('index') }}" class="text-primary">Back to Ingredients List</a> <!-- Changed to text link for consistency -->
+    </p>
+</div>
 {% endblock %}
     </div>
 

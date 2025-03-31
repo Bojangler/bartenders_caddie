@@ -6,46 +6,48 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+  
+    {% extends "base.html" %}
+
+    {% block title %}
+    {{ ingredient_name }} - Bartender's Caddie
+    {% endblock %}
+    
+    {% block content %}
     <div class="container">
-        {% extends "base.html" %}
-
-        {% block title %}Home - Bartender's Caddie{% endblock %}
-
-        {% block content %}
-        
-        <h1 class="my-4">Cocktails with {{ ingredient_name }}</h1>
-
-        <h4>Cocktails you can make with {{ ingredient_name }}</h4>
-        <ul class="list-group mb-4">
-            {% for cocktail in filtered_cocktails_you_can_make %}
-                <li class="list-group-item">
-                    <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                    - {{ cocktail['flavor_profile'] | join(', ') }}
-                </li>
-            {% endfor %}
-        </ul>
-
-        <h4>All cocktails with {{ ingredient_name }}</h4>
+        <h3 class="my-4 text-center">{{ ingredient_name }}</h3>
+    
+        <h4>Cocktails with {{ ingredient_name }}:</h4>
         <ul class="list-group mb-4">
             {% for cocktail in filtered_cocktails %}
-                <li class="list-group-item">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                    - {{ cocktail['flavor_profile'] | join(', ') }}
+                    {% if cocktail in filtered_cocktails_you_can_make %}
+                        <span class="badge bg-success">You can make this cocktail</span>
+                    {% else %}
+                        <span class="badge bg-danger">Missing ingredients</span>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
-
-        <h4>Commonly mixed with {{ ingredient_name }}</h4>
-<ul class="list-group mb-4">
-    {% for associated_ingredient, count in associated_ingredients %}
-        <li class="list-group-item">
-            {{ associated_ingredient }} - Appears in {{ count }} cocktail{% if count > 1 %}s{% endif %}
-        </li>
-    {% endfor %}
-</ul>
-{% endblock %}
-        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+    
+        <h4>Associated Ingredients:</h4>
+        <ul class="list-group mb-4">
+            {% for ingredient, count in associated_ingredients %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ ingredient }}</span>
+                    <span class="badge bg-primary">Used in {{ count }} cocktail(s)</span>
+                </li>
+            {% endfor %}
+        </ul>
+    
+        <p class="text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+        </p>
     </div>
+        {% endblock %}
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Ingredients List</a>
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

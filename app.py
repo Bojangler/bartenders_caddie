@@ -35,6 +35,11 @@ def get_cocktails_you_can_make(inventory):
 def count_additional_cocktails(inventory, ingredient_name):
     return sum(1 for cocktail in cocktail_data if len([ingredient['name'] for ingredient in cocktail['ingredients'] if ingredient['name'] not in inventory]) == 1 and any(ingredient['name'] == ingredient_name for ingredient in cocktail['ingredients']))
 
+def initialize_inventory():
+    if "inventory" not in session:
+        session["inventory"] = []
+        print("Initialized inventory in session.")  # Debugging line
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if 'inventory' not in session:
@@ -69,37 +74,74 @@ def index():
 
 @app.route("/cocktail_profile/<cocktail_name>")
 def cocktail_profile(cocktail_name):
+     # Ensure inventory is initialized
+    initialize_inventory()
+
+    # Find the cocktail by name
     cocktail = next((c for c in cocktail_data if c['name'] == cocktail_name), None)
     if cocktail is None:
         return "Cocktail not found", 404
-    return render_template("cocktail_profile.html", cocktail=cocktail)
 
+    # Get the user's inventory
+    inventory = set(session.get('inventory', []))
+
+    # Determine which ingredients are missing
+    missing_ingredients = [
+        ingredient['name'] for ingredient in cocktail['ingredients']
+        if ingredient['name'] not in inventory
+    ]
+
+    # Calculate additional cocktails counts for the modal
+    additional_cocktails_counts = {
+        ingredient: count_additional_cocktails(inventory, ingredient)
+        for ingredient in sorted_ingredients
+    }
+
+    # Pass the cocktail, inventory, missing ingredients, and modal data to the template
+    return render_template(
+        "cocktail_profile.html",
+        cocktail=cocktail,
+        inventory=inventory,
+        missing_ingredients=missing_ingredients,
+        sorted_ingredients=sorted_ingredients,
+        additional_cocktails_counts=additional_cocktails_counts
+    )
 @app.route("/all_cocktails")
 def all_cocktails():
-    sorted_cocktails = []
-    inventory = session.get('inventory', [])
+    # Sort cocktails alphabetically
+    sorted_cocktails = sorted(cocktail_data, key=lambda c: c['name'])
 
-    for cocktail in cocktail_data:
-        missing_ingredients = [
-            ingredient['name']
-            for ingredient in cocktail['ingredients']
+    # Get the user's inventory
+    inventory = set(session.get('inventory', []))
+
+    # Add missing ingredients to each cocktail
+    for cocktail in sorted_cocktails:
+        cocktail['missing_ingredients'] = [
+            ingredient['name'] for ingredient in cocktail['ingredients']
             if ingredient['name'] not in inventory
         ]
-        sorted_cocktails.append({
-            'name': cocktail['name'],
-            'flavor_profile': cocktail['flavor_profile'],
-            'missing_ingredients': missing_ingredients
-        })
 
+    # Filter cocktails the user can make
     cocktails_you_can_make = [
         cocktail for cocktail in sorted_cocktails if not cocktail['missing_ingredients']
     ]
 
+    # Calculate additional cocktails counts for the modal
+    additional_cocktails_counts = {
+        ingredient: count_additional_cocktails(inventory, ingredient)
+        for ingredient in sorted_ingredients
+    }
+
+    # Pass the required variables to the template
     return render_template(
         "all_cocktails.html",
         sorted_cocktails=sorted_cocktails,
-        cocktails_you_can_make=cocktails_you_can_make
+        cocktails_you_can_make=cocktails_you_can_make,
+        sorted_ingredients=sorted_ingredients,
+        inventory=inventory,
+        additional_cocktails_counts=additional_cocktails_counts
     )
+
 @app.route("/flavor_profile/<flavor>")
 def flavor_profile(flavor):
     filtered_cocktails = [cocktail for cocktail in cocktail_data if flavor in cocktail['flavor_profile']]
@@ -109,11 +151,24 @@ def flavor_profile(flavor):
 
 @app.route("/ingredient_profile/<ingredient_name>")
 def ingredient_profile(ingredient_name):
+    # Ensure inventory is initialized
+    initialize_inventory()
+
     # Filter cocktails that include the given ingredient
     filtered_cocktails = [
         cocktail for cocktail in cocktail_data
         if any(ingredient['name'] == ingredient_name for ingredient in cocktail['ingredients'])
     ]
+
+    # Get the user's inventory
+    inventory = set(session.get('inventory', []))
+
+    # Add missing ingredients to each cocktail
+    for cocktail in filtered_cocktails:
+        cocktail['missing_ingredients'] = [
+            ingredient['name'] for ingredient in cocktail['ingredients']
+            if ingredient['name'] not in inventory
+        ]
 
     # Get a dictionary of associated ingredients and their cocktail counts
     associated_ingredients = {}
@@ -132,22 +187,30 @@ def ingredient_profile(ingredient_name):
     )
 
     # Filter cocktails the user can make
-    inventory = set(session.get('inventory', []))
-    cocktails_you_can_make = get_cocktails_you_can_make(inventory)
-    filtered_cocktails_you_can_make = [
-        cocktail for cocktail in filtered_cocktails if cocktail in cocktails_you_can_make
+    cocktails_you_can_make = [
+        cocktail for cocktail in filtered_cocktails if not cocktail['missing_ingredients']
     ]
 
     # Count the number of distinct cocktails missing only this ingredient
     additional_cocktails_count = count_additional_cocktails(inventory, ingredient_name)
 
+    # Calculate additional cocktails counts for the modal
+    additional_cocktails_counts = {
+        ingredient: count_additional_cocktails(inventory, ingredient)
+        for ingredient in sorted_ingredients
+    }
+
+    # Pass the required variables to the template
     return render_template(
         "ingredient_profile.html",
         ingredient_name=ingredient_name,
         filtered_cocktails=filtered_cocktails,
-        filtered_cocktails_you_can_make=filtered_cocktails_you_can_make,
+        filtered_cocktails_you_can_make=cocktails_you_can_make,
         additional_cocktails_count=additional_cocktails_count,
-        associated_ingredients=associated_ingredients
+        associated_ingredients=associated_ingredients,
+        sorted_ingredients=sorted_ingredients,
+        inventory=inventory,
+        additional_cocktails_counts=additional_cocktails_counts
     )
 
 @app.route("/add_to_inventory", methods=["POST"])
