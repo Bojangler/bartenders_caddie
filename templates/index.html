@@ -1,10 +1,4 @@
-<head>
-    <meta charset="UTF-8">
-    <title>Bartender's Caddie Beta</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Add responsive meta tag -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+
     
 
     <!-- Ingredients Modal -->
@@ -46,14 +40,13 @@ Bartender's Caddie Beta
 
 {% block content %}
 <div class="container">
-    <h3 class="my-4 text-center">Mix what you can with what you have</h3> <!-- Replaced H1 with body text -->
-
+    
 
         <!-- Cocktails You Can Make Section -->
         <div class="mb-4">
             {% if cocktails_you_can_make %}
                 <h3>Cocktails You Can Make</h3>
-                <p>You already have everything you need to make these cocktails</p>
+                <p>You have everything needed to make these cocktails</p>
                 <ul class="list-group mb-4">
                     {% for cocktail in cocktails_you_can_make %}
                         <li class="list-group-item">

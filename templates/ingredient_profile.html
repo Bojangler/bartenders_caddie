@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cocktails with {{ ingredient_name }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+
   
     {% extends "base.html" %}
 
@@ -25,7 +18,11 @@
                     {% if cocktail in filtered_cocktails_you_can_make %}
                         <span class="badge bg-success">You can make this cocktail</span>
                     {% else %}
-                        <span class="badge bg-danger">Missing</span>
+                        <small class="text-muted text-end d-block">Missing: 
+                            {% for ingredient in cocktail['missing_ingredients'] %}
+                                {{ ingredient }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </small>
                     {% endif %}
                 </li>
             {% endfor %}
@@ -36,7 +33,7 @@
             {% for ingredient, count in associated_ingredients %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <span>{{ ingredient }}</span>
-                    <span class="text-center text-muted">Mixed together in {{ count }} cocktail(s)</span>
+                    <span class="text-end text-muted">Mixed together in {{ count }} cocktail(s)</span>
                 </li>
             {% endfor %}
         </ul>

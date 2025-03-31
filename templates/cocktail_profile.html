@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ cocktail.name }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+
     
     {% extends "base.html" %}
 
@@ -17,9 +10,11 @@
 
 <div class="container">
     <h3 class="my-4 text-center">{{ cocktail['name'] }}</h3>
-    <h6 class="text-center">{{ cocktail['fun_fact'] }}</h6>
-    <h6 class="text-center">{{ cocktail['tasting_notes'] }}</h6>
-    <h6 class="text-center">Perfect for {{ cocktail['occasion_or_vibe'] }}</h6>
+    <h7 class="text-center">{{ cocktail['fun_fact'] }}</h7>
+    <h7 class="text-center">{{ cocktail['tasting_notes'] }}</h7>
+    <h7 class="text-center">Perfect for {{ cocktail['occasion_or_vibe'] }}</h7>
+    
+    
     
     <h4>Ingredients:</h4>
     <ul class="list-group mb-4">
