@@ -12,7 +12,7 @@ Bartender's Caddie Beta
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ingredientsModalLabel">Add Ingredients to Your Inventory</h5>
+                    <h5 class="modal-title" id="ingredientsModalLabel">Add ingredients to your pantry</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -46,13 +46,18 @@ Bartender's Caddie Beta
         <!-- Cocktails You Can Make Section -->
         <div class="mb-4">
             {% if cocktails_you_can_make %}
-                <h3 class="mt-4">Cocktails You Can Make</h3>
+            <h3 class="mt-4">Cocktails You Can Make</h3>
                 <p>You have everything needed to make these cocktails</p>
                 <ul class="list-group mb-4">
                     {% for cocktail in cocktails_you_can_make %}
                         <li class="list-group-item">
                             <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                            - {{ cocktail['flavor_profile'] | join(', ') }}
+                            <p class="text-muted">
+                                Ingredients: 
+                                {% for ingredient in cocktail['ingredients'] %}
+                                    {{ ingredient['name'] }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
                         </li>
                     {% endfor %}
                 </ul>
@@ -60,8 +65,16 @@ Bartender's Caddie Beta
                     <a href="{{ url_for('all_cocktails') }}" class="text-primary">View all cocktails</a> <!-- Changed to text link -->
                 </p>
             {% else %}
-                <p class="text-center text-muted">Add ingredients to your inventory to see what you can make!</p>
-            {% endif %}
+            <p class="text-center text-dark mt-4">Tell me what's in your bar and I'll tell you how to mix something awesome</p>
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ingredientsModal">
+                    Add Ingredients
+                </button>
+            </div>
+            <p class="text-center text-muted mt-3">
+                Otherwise, you can <a href="{{ url_for('all_cocktails') }}" class="text-primary">browse all cocktails</a> to get inspired!
+            </p>
+        {% endif %}
         </div>
 
 
@@ -75,7 +88,7 @@ Bartender's Caddie Beta
                         {% if ingredient not in inventory %}
                             <li class="list-group-item">
                                 <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient) }}">{{ ingredient }}</a>
-                                - Add this ingredient and you can make {{ additional_cocktails_counts[ingredient] }} additional cocktails
+                                - Add this to make {{ additional_cocktails_counts[ingredient] }} more cocktails
                             </li>
                         {% endif %}
                     {% endfor %}
