@@ -12,26 +12,32 @@
     <h3 class="my-4 text-center">{{ cocktail['name'] }}</h3>
     <h7 class="text-center">{{ cocktail['fun_fact'] }}</h7>
     <h7 class="text-center">{{ cocktail['tasting_notes'] }}</h7>
-    <h7 class="text-center">Perfect for {{ cocktail['occasion_or_vibe'] }}</h7>
+    <h7 class="text-center">Perfect for {{ cocktail['occasion_or_vibe'] }}.</h7>
     
     
     
-    <h4>Ingredients:</h4>
-    <ul class="list-group mb-4">
+    <h4 class ="mt-4">Ingredients:</h4>
+    <ul class="list-group mb-2">
         {% for ingredient in cocktail['ingredients'] %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ ingredient['name'] }} - <strong>{{ ingredient['amount'] }}</strong></span>
-                {% if ingredient['name'] not in inventory %}
-                    <span class="badge bg-danger">Missing</span>
-                {% else %}
-                    <span class="badge bg-success">Available</span>
-                {% endif %}
-            </li>
-        {% endfor %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+                <a href="{{ url_for('ingredient_profile', ingredient_name=ingredient['name']) }}" class="text-decoration-none">
+                    {{ ingredient['name'] }}
+                </a> - <strong>{{ ingredient['amount'] }}</strong>
+            </span>
+            {% if ingredient['name'] not in inventory %}
+                <span class="badge bg-danger">Missing</span>
+            {% else %}
+                <span class="badge bg-success">Available</span>
+            {% endif %}
+        </li>
+    {% endfor %}
     </ul>
 
     {% if missing_ingredients %}
-        <p class="text-danger">You are missing {{ missing_ingredients | length }} ingredient(s): {{ missing_ingredients | join(', ') }}</p>
+    <small class="text-muted d-block">You are missing {{ missing_ingredients | length }} ingredient(s): 
+        {{ missing_ingredients | join(', ') }}
+    </small>
     {% else %}
         <p class="text-success">You have all the ingredients to make this cocktail!</p>
     {% endif %}
@@ -39,7 +45,7 @@
     
     
 
-    <h4>Recipe:</h4>
+    <h4 class ="mt-4">Recipe:</h4>
     <p>{{ cocktail['recipe'] }}</p>
 
     
