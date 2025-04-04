@@ -229,5 +229,18 @@ def add_to_inventory():
         print(f"{ingredient} is already in inventory or invalid.")  # Debugging line
     return redirect(url_for("index", expand="ingredients"))
 
+@app.route('/add_starter_kit')
+def add_starter_kit():
+    # Starter kit ingredients
+    starter_kit = ['Gin', 'Bourbon', 'Vodka', 'Lime', 'Lime Juice', 'Simple Syrup', 'Club Soda', 'Soda Water', 'Triple Sec']
+    
+    # Add ingredients to the user's inventory
+    inventory = session.get('inventory', [])
+    inventory = list(set(inventory + starter_kit))  # Avoid duplicates
+    session['inventory'] = inventory
+    
+    # Redirect back to the index page
+    return redirect(url_for('index'))
+
 if __name__ == "__main__":
     app.run(debug=True)  # Replace with app.run(debug=True) if you want to run in debug mode

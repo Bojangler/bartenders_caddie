@@ -41,40 +41,57 @@ Bartender's Caddie Beta
 
 
 
-<div class="container">
-    
-        <!-- Cocktails You Can Make Section -->
-        <div class="mb-4">
-            {% if cocktails_you_can_make %}
-            <h3 class="mt-4">Cocktails You Can Make</h3>
-                <p>You have everything needed to make these cocktails</p>
-                <ul class="list-group mb-4">
-                    {% for cocktail in cocktails_you_can_make %}
-                        <li class="list-group-item">
-                            <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
-                            <p class="text-muted">
-                                {% for ingredient in cocktail['ingredients'] %}
-                                    {{ ingredient['name'] }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </p>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <p class="text-center">
-                    <a href="{{ url_for('all_cocktails') }}" class="text-primary">View all cocktails</a> <!-- Changed to text link -->
-                </p>
-            {% else %}
-            <p class="text-center text-dark mt-4">Tell me what's in your bar and I'll tell you how to mix something awesome</p>
-            <div class="text-center mt-4">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ingredientsModal">
-                    Add Ingredients
-                </button>
+    <div class="container">
+        {% if inventory %}
+            <!-- Cocktails You Can Make Section -->
+            <div class="mb-4">
+                {% if cocktails_you_can_make %}
+                    <h3 class="mt-4">Cocktails You Can Make</h3>
+                    <p>You have everything needed to make these cocktails</p>
+                    <ul class="list-group mb-4">
+                        {% for cocktail in cocktails_you_can_make %}
+                            <li class="list-group-item">
+                                <a href="{{ url_for('cocktail_profile', cocktail_name=cocktail['name']) }}">{{ cocktail['name'] }}</a>
+                                <p class="text-muted">
+                                    {% for ingredient in cocktail['ingredients'] %}
+                                        {{ ingredient['name'] }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="text-center">
+                        <a href="{{ url_for('all_cocktails') }}" class="text-primary">View all cocktails</a>
+                    </p>
+                {% else %}
+                    <p class="text-center text-dark mt-4">Tell me what's in your bar and I'll tell you how to mix something awesome</p>
+                    <div class="text-center mt-4">
+    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#ingredientsModal">
+        Add Ingredients
+    </button>
+    <p class="text-muted mt-3">Or start with the basics by clicking below.</p>
+    <a href="{{ url_for('add_starter_kit') }}" class="text-primary">Bartender's starter kit</a>
+</div>
+                    <p class="text-center text-muted mt-3">
+                        Otherwise, you can <a href="{{ url_for('all_cocktails') }}" class="text-primary">browse all cocktails</a> to get inspired!
+                    </p>
+                {% endif %}
             </div>
-            <p class="text-center text-muted mt-3">
-                Otherwise, you can <a href="{{ url_for('all_cocktails') }}" class="text-primary">browse all cocktails</a> to get inspired!
-            </p>
+        {% else %}
+            <!-- Welcome Screen -->
+            <div class="text-center mt-5">
+                <h1>Welcome to Bartender's Pantry!</h1>
+                <p class="text-dark fs-4 mt-3">Start by adding some ingredients and we'll show you the cocktails you can make with what you have.</p>
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#ingredientsModal">
+                        Add Ingredients
+                    </button>
+                    <p class="text-muted mt-3">Or start with the basics by clicking below.</p>
+                    <a href="{{ url_for('add_starter_kit') }}" class="text-primary">Bartender's starter kit</a>
+                </div>
+            </div>
         {% endif %}
-        </div>
+    </div>
 
 
         <!-- Additional Ingredients Section -->
